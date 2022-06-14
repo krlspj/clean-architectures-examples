@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AmbientContext" Version="2.1.1" />
+    <PackageReference Include="AmbientContext.LogService.Serilog" Version="1.1.5" />
+<!--    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.3" />-->
+<!--    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.3" />-->
+<!--    <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.2.3" />-->
+<!--    <PackageReference Include="Microsoft.AspNet.WebApi.WebHost" Version="4.0.30506" />-->
+<!--    <PackageReference Include="Microsoft.Owin" Version="3.1.0" />-->
+<!--    <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="2.0.2" />-->
+<!--    <PackageReference Include="Microsoft.Owin.Hosting" Version="3.1.0" />-->
+<!--    <PackageReference Include="Microsoft.Web.Infrastructure" Version="1.0.0" />-->
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Serilog" Version="2.5.0" />
+    <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="3.0.1" />
+    <PackageReference Include="SimpleInjector.Integration.GenericHost" Version="4.9.0" />
+    <PackageReference Include="simpleinjector.integration.aspnetcore" Version="4.9.0" />
+    <PackageReference Include="simpleinjector.integration.aspnetcore.mvc" Version="4.9.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Adapter.Notification.RabbitMq\Adapter.Notification.RabbitMq.csproj" />
+    <ProjectReference Include="..\Adapter.Persistence.CouchDb\Adapter.Persistence.CouchDb.csproj" />
+    <ProjectReference Include="..\Adapter.Trigger.Csv\Adapter.Trigger.Csv.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+</Project>

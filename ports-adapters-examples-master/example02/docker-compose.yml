@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+
+  mysql:
+    build:
+      context: ./docker/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=bookorders
+      - MYSQL_USER=bookorder_service
+      - MYSQL_PASSWORD=123
+
+  eventstore:
+    image:
+      eventstore/eventstore
+    ports:
+      - "2113:2113"
+      - "1113:1113"

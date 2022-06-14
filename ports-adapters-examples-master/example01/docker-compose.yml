@@ -1,0 +1,39 @@
+version: '2'
+
+services:
+
+  rabbitMq:
+    image: rabbitmq:3-management
+    ports:
+      - "15671-15672:15671-15672"
+      - "4369:4369"
+      - "5671-5672:5671-5672"
+      - "25672:25672"
+
+  mysql:
+    build:
+      context: ./docker/mysql
+    container_name: bookorders_mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./database/:/database:ro"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=bookorders
+      - MYSQL_USER=bookorder_srv
+      - MYSQL_PASSWORD=123
+
+  email:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+      
+  couchdb:
+    image: couchdb:1.6.1
+    ports:
+      - "5984:5984"
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=123
