@@ -1,0 +1,13 @@
+app: dev
+
+server :
+  port: 5000
+
+database:
+  host: mysql
+  name: test
+  userName: root
+  password: secret
+
+jwt:
+  pub: /jwtkey/*.pub

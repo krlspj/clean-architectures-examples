@@ -1,0 +1,10 @@
+app: dev
+
+server :
+  port: 5000
+
+database:
+  host: localhost
+  name: test
+  userName: root
+  password: secret
