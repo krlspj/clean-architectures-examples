@@ -1,0 +1,31 @@
+version: "3.1"
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: blog
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+    ports:
+      - 5432:5432
+
+  golang-backend-blog-server:
+      build: .
+      depends_on:
+        - postgres
+      restart: on-failure
+      environment:
+        - DB_HOST=postgres
+        - DB_PORT=5432
+        - DB_NAME=blog
+        - DB_USER=postgres
+        - DB_PASS=mysecretpassword
+        - LOG_LEVEL=INFO
+        - PORT=8080
+        - ENV=development
+      ports:
+        - 8080:8080
+      command: sh -c "sleep 10; ./golang-backend-blog migrate; ./golang-backend-blog start"
+
