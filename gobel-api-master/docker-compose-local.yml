@@ -1,0 +1,76 @@
+version: "3.8"
+services:
+  app:
+    container_name: "gobel-api"
+    env_file: ".env"
+    build:
+        context: "./app"
+        dockerfile: "Dockerfile.local"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app:/go/gobel-api/app
+    networks:
+      - gobel_link
+    depends_on:
+      - mysql
+  mysql:
+    container_name: "gobel-api-mysql"
+    env_file: ".env"
+    build:
+        context: "./mysql"
+        dockerfile: "Dockerfile.local"
+        args:
+          PLATFORM: "${PLATFORM}"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ./mysql/log:/var/log/mysql
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - seccomp:unconfined
+    networks:
+      - gobel_link
+  nginx:
+    container_name: "gobel-api-nginx"
+    build:
+        context: "./nginx"
+        dockerfile: "Dockerfile.local"
+        args:
+          PLATFORM: "${PLATFORM}"
+    ports:
+      - "80:80"
+    networks:
+      - gobel_link
+    depends_on:
+      - app
+  redis:
+    container_name: "gobel-api-redis"
+    env_file: ".env"
+    build:
+        context: "./redis"
+        dockerfile: "Dockerfile.local"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/var/lib/redis
+    networks:
+      - gobel_link
+  redis-insight:
+    container_name: "gobel-api-redis-insight"
+    env_file: ".env"
+    build:
+        context: "./redis-insight"
+        dockerfile: "Dockerfile.local"
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./redis-insight/data:/var/lib/redis-insight
+    networks:
+      - gobel_link
+networks:
+    gobel_link:
+        external: true

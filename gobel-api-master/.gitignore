@@ -1,0 +1,21 @@
+.DS_STORE
+
+# app
+.env
+/app/tmp
+
+# docker
+/mysql/data
+!/mysql/data/.gitkeep
+/mysql/log
+!/mysql/log/.gitkeep
+
+/redis/data
+!/redis/data/.gitkeep
+
+/redis-insight/data
+!/redis-insight/data/.gitkeep
+
+# editor
+.vscode/
+launch.json
