@@ -1,0 +1,80 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    tags:
+       - '*'
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: arnested/go-version-action@v1
+        id: go-version
+      - name: Install Go ${{ steps.go-version.outputs.minimal }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ steps.go-version.outputs.minimal }}
+      - name: Run Tests
+        run: go test ./...
+
+  build-mongo-dev:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    steps:
+    - id: vars
+      run: echo ::set-output name=tag::$(echo ${{ github.ref_name }} | xargs basename)
+    - uses: actions/checkout@v2
+    - uses: azure/docker-login@v1
+      with:
+        login-server: scvregistry.azurecr.io
+        username: ${{ secrets.AzureContainerRegistry_Username }}
+        password: ${{ secrets.AzureContainerRegistry_Password }}
+    - run: |
+        export VERSION=${{ steps.vars.outputs.tag }} && export ENV=dev && export PORT=443 && export DB=mongo && docker-compose build --no-cache
+        docker tag go-hexagonal-api-mongo.dev:${{ steps.vars.outputs.tag }} scvregistry.azurecr.io/go-hexagonal-api-mongo.dev:${{ steps.vars.outputs.tag }}
+        docker push scvregistry.azurecr.io/go-hexagonal-api-mongo.dev:${{ steps.vars.outputs.tag }}
+  
+  build-postgres-dev:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    steps:
+    - id: vars
+      run: echo ::set-output name=tag::$(echo ${{ github.ref_name }} | xargs basename)
+    - uses: actions/checkout@v2
+    - uses: azure/docker-login@v1
+      with:
+        login-server: scvregistry.azurecr.io
+        username: ${{ secrets.AzureContainerRegistry_Username }}
+        password: ${{ secrets.AzureContainerRegistry_Password }}
+    - run: |
+        export VERSION=${{ steps.vars.outputs.tag }} && export ENV=dev && export PORT=443 && export DB=postgres && docker-compose build --no-cache
+        docker tag go-hexagonal-api-postgres.dev:${{ steps.vars.outputs.tag }} scvregistry.azurecr.io/go-hexagonal-api-postgres.dev:${{ steps.vars.outputs.tag }}
+        docker push scvregistry.azurecr.io/go-hexagonal-api-postgres.dev:${{ steps.vars.outputs.tag }}
+
+  deploy-mongo-dev:
+    runs-on: ubuntu-latest
+    needs: build-mongo-dev
+    environment: mongo-dev
+    steps:
+    - id: vars
+      run: echo ::set-output name=tag::$(echo ${{ github.ref_name }} | xargs basename)
+    - uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'go-hexagonal-api-mongo-dev'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_Mongo_Dev }}
+        images: 'scvregistry.azurecr.io/go-hexagonal-api-mongo.dev:${{ steps.vars.outputs.tag }}'
+
+  deploy-postgres-dev:
+    runs-on: ubuntu-latest
+    needs: build-postgres-dev
+    environment: postgres-dev
+    steps:
+    - id: vars
+      run: echo ::set-output name=tag::$(echo ${{ github.ref_name }} | xargs basename)
+    - uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'go-hexagonal-api-postgres-dev'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_Postgres_Dev }}
+        images: 'scvregistry.azurecr.io/go-hexagonal-api-postgres.dev:${{ steps.vars.outputs.tag }}'

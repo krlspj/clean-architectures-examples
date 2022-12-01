@@ -1,0 +1,9 @@
+{
+    "MongoAddress": "http://localhost",
+    "PostgresAddress": "http://localhost",
+    "Timeout": "2m",
+    "Async": {
+        "Run": true,
+        "Interval": "2m"
+    }
+}

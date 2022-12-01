@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package trainer;
+
+option go_package = "github.com/ThreeDotsLabs/wild-workouts-go-ddd-example/internal/trainer";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service TrainerService {
+  rpc IsHourAvailable(IsHourAvailableRequest) returns (IsHourAvailableResponse) {}
+  rpc ScheduleTraining(UpdateHourRequest) returns (google.protobuf.Empty) {}
+  rpc CancelTraining(UpdateHourRequest) returns (google.protobuf.Empty) {}
+  rpc MakeHourAvailable(UpdateHourRequest) returns (google.protobuf.Empty) {}
+}
+
+message IsHourAvailableRequest {
+  google.protobuf.Timestamp time = 1;
+}
+
+message IsHourAvailableResponse {
+  bool is_available = 1;
+}
+
+message UpdateHourRequest {
+  google.protobuf.Timestamp time = 1;
+}
